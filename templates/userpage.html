@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-bg">
+<main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+<div class="container emp-profile" style="height: 800px;">
+            <form method="post">
+                <div class="row" >
+                    <div class="col-md-2">
+<!--                        <div class="profile-img">-->
+<!--                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" alt=""/>-->
+<!--                            <div class="file btn btn-lg btn-primary">-->
+<!--                                Change Photo-->
+<!--                                <input type="file" name="file"/>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                    </div>
+                    <div class="col-md-8">
+                        <div class="profile-head">
+                                    <h5>
+                                        {{name}}
+                                    </h5>
+                                    <h6>
+                                        Client Information
+                                    </h6>
+<!--                                    <p class="proile-rating">RANKINGS : <span>8/10</span></p>-->
+                        </div>
+                        <br>
+
+                            <ul class="nav nav-tabs " id="myTab" role="tablist">
+                                <li class="nav-item rounded-pill" role="presentation">
+                                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Profile</button>
+                                </li>
+                                <li class="nav-item rounded-pill" role="presentation">
+                                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Booking Information</button>
+                                </li>
+                            </ul>
+                        <br>
+
+
+
+                    </div>
+                    <div class="col-md-2">
+                        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+
+                    </div>
+                    <div class="col-md-8">
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Username</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{username}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Name</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{name}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Email</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{email}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Phone</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{phone}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <h5>Booking Information</h5>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <a class="btn btn-primary rounded-pill" href="{{url_for('home')}}">Book a new session</a>
+                                            </div>
+                                        </div>
+                                        <br>
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <label>Nama</label>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <p>{{name}}</p>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <label>Address</label>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <p>{{address}}</p>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <label>Date</label>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <p>{{date}}</p>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <label>Time</label>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <p>{{time}}</p>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+
+                            </div>
+                            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Nama</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{name}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Address</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{address}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Service</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{service}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Package</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{package}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Date</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{date}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Time</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{time}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Payment</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>{{payment}}</p>
+                                                <img src="{{url_for('static', filename=payment)}}" style="height:128px;>
+                                            </div>
+                                        </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+</main>
+</section>
+{% endblock %}

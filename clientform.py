@@ -3,7 +3,7 @@ from wtforms import (StringField, EmailField, DateField, FileField, PasswordFiel
 from wtforms.validators import InputRequired, Length
 
 class LoginUser(FlaskForm):
-    username = StringField('Username')
+    username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password')
     submit = SubmitField('Login')
 
@@ -22,7 +22,8 @@ class ClientForm(FlaskForm):
     address = StringField('Alamat')
     payment = FileField('Bukti transfer')
     dp = StringField('Besaran DP')
-    session = StringField('Sesi')
+    service = StringField('Sesi')
+    package = StringField('Paket')
     date = DateField('Tanggal')
     time = TimeField('Waktu')
     instagram = StringField('Social media')

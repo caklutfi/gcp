@@ -24,7 +24,7 @@
         {{ form.csrf_token }}
         <div>
         <div>
-           {{ form.username.label}}
+           {{ form.username.label(class="font-weight-bold")}}
             {{ form.username(class="form-control") }}
         </div>
         <div>
@@ -34,7 +34,7 @@
         <br>
         <div>
 
-            {{ form.submit(class="btn btn-primary") }}
+            {{ form.submit(class="btn btn-primary btn-xl") }}
         </div>
         </div>
 
