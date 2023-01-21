@@ -14,9 +14,8 @@ class Register(FlaskForm):
     password = PasswordField('Password')
     submit = SubmitField('Register')
 
-
 class ClientForm(FlaskForm):
-    fullname = StringField('Name')
+    fullname = StringField('Nama')
     email = EmailField('Email')
     phone = StringField('Nomor telepon/WA')
     address = StringField('Alamat')

@@ -6,15 +6,15 @@ from flask_login import LoginManager, UserMixin, login_user,  login_required, lo
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import requests
+from mongo import fetchall, fetchone
 
-# from flask_ngrok import run_with_ngrok
+
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'zip'}
 # Setting up the application
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "secretkey"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///clients.db'
 app.config['UPLOAD_FOLDER'] = 'static'
-
 
 
 db = SQLAlchemy(app)
@@ -48,10 +48,14 @@ class Client(UserMixin, db.Model):
 db.create_all()
 
 
-# run_with_ngrok(app)
-
 url = 'https://api.npoint.io/e21406b80f9016c674e8'
 response = requests.get(url).json()
+
+
+jualan= []
+dagangan = fetchall()
+for i in dagangan:
+    jualan.append(i)
 
 # making route
 
@@ -65,7 +69,7 @@ def register():
     if request.method == 'POST':
         email = request.form.get('email')
         username = request.form.get('username').lower()
-        name = request.form.get('name')
+        name = request.form.get('name').title()
         hashed_password = generate_password_hash(request.form.get('password'), method='pbkdf2:sha256', salt_length=8)
         password = hashed_password
         print(email, username, password)
@@ -80,8 +84,6 @@ def register():
         flash('halo {}, you are registered, please login'.format(user.username))
         return redirect(url_for('home'))
     return render_template('registers.html', form=form)
-
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -107,6 +109,7 @@ def login():
     return render_template('logins.html', form=form)
 
 @app.route('/logout')
+@login_required
 def logout():
     if 'username' in session:
         session.pop('username')
@@ -116,7 +119,7 @@ def logout():
         flash('you are already logged out, please login again')
     return redirect(url_for('home'))
 
-@app.route('/cliendata', methods=['GET', 'POST'])
+@app.route('/wtform', methods=['GET', 'POST'])
 def wtform():
     name = None
     form = ClientForm()
@@ -151,6 +154,45 @@ def wtform():
         flash('you need to login')
         return redirect(url_for('home'))
 
+@app.route('/form', methods=['GET', 'POST'])
+@login_required
+def form():
+    username = session['username']
+    nama = Client.query.filter_by(username=username).first()
+    form = ClientForm()
+    if 'username' in session:
+        if request.method == 'POST':
+            name = form.fullname.data
+            email = form.email.data
+            address = form.address.data
+            phone = form.phone.data
+            date = form.date.data
+            time = form.time.data
+            file = form.payment.data
+            print(type(date))
+            # print(file.filename)
+            client_to_update = Client.query.filter_by(username=session['username']).first()
+            print(client_to_update.email)
+            client_to_update.email = email
+            client_to_update.name = name
+            client_to_update.address = address
+            client_to_update.phone = phone
+            client_to_update.date = date.strftime("%Y %m %d")
+            client_to_update.time = time.strftime("%H:%M:%S")
+            client_to_update.service = request.form.get('service')
+            client_to_update.package = request.form.get('package')
+            # client_to_update.file = file.filename
+            db.session.commit()
+            # file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'],
+            #                        secure_filename(file.filename)))
+
+            return redirect(url_for('userpage'))
+        return render_template("form.html", name=nama.name, form=form)
+    else:
+        flash('you need to login')
+        return redirect(url_for('home'))
+
+
 @app.route('/user')
 @login_required
 def user():
@@ -173,7 +215,9 @@ def user():
     else:
         flash('you need to log in')
         return redirect(url_for('home'))
+
 @app.route('/userpage')
+@login_required
 def userpage():
     if 'username' in session and current_user.is_authenticated:
 
@@ -199,6 +243,29 @@ def userpage():
         flash('you need to log in')
         return redirect(url_for('home'))
 
+@app.route('/services')
+def services():
+    jualan = []
+    dagangan = fetchall()
+    for i in dagangan:
+        jualan.append(i)
+
+    return render_template('services.html', services=jualan)
+
+@app.route('/product')
+def product():
+    jualan = []
+    dagangan = fetchall()
+    for i in dagangan:
+        jualan.append(i)
+
+    product = fetchone(request.args.get('service'))
+    print(type(product))
+    return render_template('product2.html', product=product, services=jualan)
+
+@app.errorhandler(401)
+def custom_401(error):
+    return redirect(url_for('home'))
 
 
 # running application

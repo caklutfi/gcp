@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<section class="intro page-bg">
+  <main>
+  <br><br><br><br>
+  <div class="mask d-flex align-items-center h-100 gradient-custom">
+    <div class="container ">
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-9 col-xl-7">
+          <div class="card rounded-5 form-card">
+            <div class="card-body p-4 p-md-5">
+              <h3 class="mb-2 pb-2">halo {{name}}</h3>
+              <p>Isi informasi berikut untuk melengkapi proses pemesananmu</p>
+
+              <form method="POST" enctype="multipart/form-data">
+                {{ form.csrf_token }}
+
+                <div class="row">
+                  <div class="col mb-4">
+
+                    <div class="form-outline">
+                      {{ form.fullname.label}}
+                      {{ form.fullname(class="form-control") }}
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col mb-4">
+                    {{ form.email.label}}
+                    {{ form.email(class="form-control") }}
+
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    {{ form.phone.label}}
+                    {{ form.phone(class="form-control") }}
+
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    {{ form.date.label}}
+                    {{ form.date(class="form-control") }}
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    {{ form.time.label}}
+                    {{ form.time(class="form-control") }}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12 mb-4">
+
+                    {{ form.address.label}}
+                    {{ form.address(class="form-control") }}
+                  </div>
+                </div>
+                  <div class="row">
+                    {{ form.submit(class="btn btn-primary rounded-pill") }}
+                  </div>
+
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+</section>
+{% endblock%}

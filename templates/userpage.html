@@ -3,10 +3,12 @@
 {% block content %}
 <section class="page-bg">
 <main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
-<div class="container emp-profile" style="height: 800px;">
+<div class="container emp-profile rounded-5" style="height: 600px;">
             <form method="post">
                 <div class="row" >
-                    <div class="col-md-2">
+                    <div class="col-md-2 align-center">
+                        <br>
+                        <h6>Booking Status:</h6>
 <!--                        <div class="profile-img">-->
 <!--                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" alt=""/>-->
 <!--                            <div class="file btn btn-lg btn-primary">-->
@@ -17,6 +19,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="profile-head">
+                            <br>
                                     <h5>
                                         {{name}}
                                     </h5>
@@ -83,9 +86,11 @@
                                                 <p>{{phone}}</p>
                                             </div>
                                         </div>
+                                        <br>
                                         <div class="row">
                                             <h5>Booking Information</h5>
                                         </div>
+                                        <br>
                                         <div class="row">
                                             <div class="col-md-5">
                                                 <a class="btn btn-primary rounded-pill" href="{{url_for('home')}}">Book a new session</a>
