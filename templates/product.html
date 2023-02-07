@@ -4,36 +4,58 @@
         <section class="py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{product['img-lg']}}" alt="..." /></div>
+                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{image}}" alt="wkwk" /></div>
                     <div class="col-md-6">
-                        <div class="small mb-1">SKU: BST-498</div>
-                        <h1 class="display-5 fw-bolder">{{product['service'].title()}}</h1>
-<!--                        {% print(product['package-details'][0]) %}-->
+                        <div class="small mb-1">UPDATED: 2023</div>
+                        <h1 class="display-5 fw-bolder">{{dagangan[0]['service'].title()}}</h1>
                         <div class="fs-5 mb-5">
-                            <span class="text-decoration-line-through">$45.00</span>
-                            <span>$40.00</span>
+                            <span class="text-decoration-line-through"></span>
+                            <span></span>
                         </div>
-                        <div class="d-flex align-items-start">
-                              <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                              {% for i in product['package'] %}
-                                <button class="nav-link mb-2 {% if i =='topaz': %}active{% endif %}" id="v-pills-{{i[:2]}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{i[:2]}}" type="button" role="tab" aria-controls="v-pills-{{i[:2]}}" aria-selected="true">{{i}}</button>
-                              {% endfor %}
+                        <div>
+
+                            <nav>
+                              <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                  {% for i in dagangan%}
+                                <button class="nav-link {%if i['package'] == 'topaz'%}active{%endif%}" id="nav-{{i['package']}}-tab" data-bs-toggle="tab" data-bs-target="#nav-{{i['package']}}" type="button" role="tab" aria-controls="nav-{{i['package']}}" aria-selected="true">{{i['package']}}</button>
+                                  {% endfor %}
+
                               </div>
-                              <div class="tab-content" id="v-pills-tabContent">
-                                {% for i in product['package-details'] %}
-                                    <div class="tab-pane fade show {% if i[0] =='t': %}active{% endif %}" id="v-pills-{{i[:2]}}" role="tabpanel" aria-labelledby="v-pills-{{i[:2]}}-tab" tabindex="0">{{i}}</div>
+                            </nav>
+                            <div class="tab-content" id="nav-tabContent">
+                                {%for i in dagangan%}
+                              <div class="tab-pane fade show {%if i['package'] == 'topaz'%}active{%endif%}" id="nav-{{i['package']}}" role="tabpanel" aria-labelledby="nav-{{i['package']}}-tab" tabindex="0">
+                                  <div class="card">
+                                  <div class="card-body">
+                                    <h5 class="card-title">Rp. {{i.price}}</h5>
+                                    <p class="card-text"></p>
+                                      <ul>
+                                      <li>{{i.crew}}</li>
+                                      <li>{{i.duration}}</li>
+                                      <li>{{i.edited}}</li>
+                                      <li>{{i.photos}}</li>
+                                      <li>{{i.print}}</li>
+                                      <li>{{i.storage}}</li>
+                                      {%if i['videos'] %}
+                                      <li>{{i.videos}}</li>
+                                      {% endif %}
+                                      {%if i['extras'] %}
+                                      <li>{{i.extras}}</li>
+                                      {% endif %}
+
+                                    </ul>
+                                    <a href="{{url_for('userpage', booking_info=dagangan[0]['service'])}}" class="btn btn-primary"><i class="bi-cart-fill me-1"></i>Book now</a>
+                                  </div>
+                                </div>
+                              </div>
                                 {% endfor %}
 
                             </div>
+
+
                             </div>
                         <br>
-                        <div class="d-flex">
-                            <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
-                                <i class="bi-cart-fill me-1"></i>
-                                Add to cart
-                            </button>
-                        </div>
+
                     </div>
                 </div>
             </div>

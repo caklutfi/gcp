@@ -5,6 +5,20 @@
 <section class="bg-light">
   <main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
     <div class="container">
+      {% with messages = get_flashed_messages() %}
+       {% if messages %}
+          {% for message in messages %}
+
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <span aria-hidden="true"></span>
+            </button>
+            </div>
+
+          {% endfor %}
+       {% endif %}
+    {% endwith %}
       <div class="card login-card rounded-5">
         <div class="row no-gutters">
           <div class="col-md-5">

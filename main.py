@@ -6,7 +6,7 @@ from flask_login import LoginManager, UserMixin, login_user,  login_required, lo
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import requests
-from mongo import fetchall, fetchone
+from mongo import fetchall, fetchone, create_user, find_user, get_package
 
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'zip'}
@@ -20,32 +20,32 @@ app.config['UPLOAD_FOLDER'] = 'static'
 db = SQLAlchemy(app)
 app.app_context().push()
 
-loginmanager= LoginManager(app)
+# loginmanager= LoginManager(app)
 
-@loginmanager.user_loader
-def load_user(user_id):
-    return Client.query.get(int(user_id))
+# @loginmanager.user_loader
+# def load_user(user_id):
+#     return Client.query.get(int(user_id))
 
-class Client(UserMixin, db.Model):
-    id = db.Column(db.Integer, unique=True, primary_key=True, nullable=False)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(20), unique=False, nullable=False)
-    name = db.Column(db.String, unique=False, nullable=True)
-    email = db.Column(db.String, unique=False, nullable=True)
-    address = db.Column(db.String, unique=False, nullable=True)
-    phone = db.Column(db.String, unique=False, nullable=True)
-    date = db.Column(db.String, unique=False, nullable=True)
-    time = db.Column(db.String, unique=False, nullable=True)
-    file = db.Column(db.String, unique=False, nullable=True)
-    service = db.Column(db.String)
-    package = db.Column(db.String)
-    col13 = db.Column(db.String)
-    col14 = db.Column(db.String)
+# class Client(UserMixin, db.Model):
+#     id = db.Column(db.Integer, unique=True, primary_key=True, nullable=False)
+#     username = db.Column(db.String(20), unique=True, nullable=False)
+#     password = db.Column(db.String(20), unique=False, nullable=False)
+#     name = db.Column(db.String, unique=False, nullable=True)
+#     email = db.Column(db.String, unique=False, nullable=True)
+#     address = db.Column(db.String, unique=False, nullable=True)
+#     phone = db.Column(db.String, unique=False, nullable=True)
+#     date = db.Column(db.String, unique=False, nullable=True)
+#     time = db.Column(db.String, unique=False, nullable=True)
+#     file = db.Column(db.String, unique=False, nullable=True)
+#     service = db.Column(db.String)
+#     package = db.Column(db.String)
+#     col13 = db.Column(db.String)
+#     col14 = db.Column(db.String)
+#
+#     def __repr__(self):
+#         return '<Username: {}>'.format(self.username)
 
-    def __repr__(self):
-        return '<Username: {}>'.format(self.username)
-
-db.create_all()
+# db.create_all()
 
 
 url = 'https://api.npoint.io/e21406b80f9016c674e8'
@@ -73,29 +73,66 @@ def register():
         hashed_password = generate_password_hash(request.form.get('password'), method='pbkdf2:sha256', salt_length=8)
         password = hashed_password
         print(email, username, password)
-        new_client = Client(email=email, username=username, password=password, name=name)
-        db.session.add(new_client)
-        db.session.commit()
-        client = Client.query.all()
-        print('client{}'.format(client))
-        user = Client.query.filter_by(username=username).first()
-        print(user.username)
-        login_user(user)
-        flash('halo {}, you are registered, please login'.format(user.username))
+        # new_client = Client(email=email, username=username, password=password, name=name)
+        # db.session.add(new_client)
+        # db.session.commit()
+        # client = Client.query.all()
+        # print('client{}'.format(client))
+        # user = Client.query.filter_by(username=username).first()
+        # print(user.username)
+        create_user(email, username, password, name)
+
+        # login_user(user)
+        # flash('halo {}, you are registered, please login'.format(user.username))
         return redirect(url_for('home'))
     return render_template('registers.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    session.pop('username', None)
     form = LoginUser()
     if request.method == 'POST':
         password = request.form.get('password')
-        user = Client.query.filter_by(username=request.form['username']).scalar()
+        # user = Client.query.filter_by(username=request.form['username']).scalar()
+        username = request.form.get('username')
+        print(username, type(username))
+        query = find_user(username)
+        if query is not None:
+
+            print(type(query),query)
+            print(query['email'])
+            if check_password_hash(query['password'],password):
+                session['username']= query['username']
+                print("session username is:", session['username'])
+                return redirect(url_for('home'))
+            else:
+                print('wrong password')
+                flash('wrong password')
+                return redirect(url_for('login'))
+
+            # session['mongo'] = find_user(request.form.get('username'))
+            # print(session['mongo']['username'])
+            # username = session['mongo']['username']
+            # mongo_pass = session['mongo']['password']
+            # print(username, mongo_pass)
+
+        else:
+            print('user not exist')
+            flash('user does not exist')
+    return render_template("logins.html", form=form)
+
+#not used
+@app.route('/logins', methods=['GET', 'POST'])
+def logins():
+    form = LoginUser()
+    if request.method == 'POST':
+        password = request.form.get('password')
+        # user = Client.query.filter_by(username=request.form['username']).scalar()
         if user == None:
             flash('user does no t exist')
         else:
             if check_password_hash(user.password, password):
-                login_user(user)
+                # login_user(user)
                 session['username'] = user.username
                 flash(f"you are logged in, welcome {user.username}")
                 return redirect(url_for('home'))
@@ -109,12 +146,12 @@ def login():
     return render_template('logins.html', form=form)
 
 @app.route('/logout')
-@login_required
+# @login_required
 def logout():
     if 'username' in session:
         session.pop('username')
-        logout_user()
-        flash('you are logged out')
+        # logout_user()
+        # flash('you are logged out')
     else:
         flash('you are already logged out, please login again')
     return redirect(url_for('home'))
@@ -134,18 +171,18 @@ def wtform():
             file = form.payment.data
             print(type(date))
             print(file.filename)
-            client_to_update = Client.query.filter_by(username=session['username']).first()
-            print(client_to_update.email)
-            client_to_update.email = email
-            client_to_update.name = name
-            client_to_update.address = address
-            client_to_update.phone = phone
-            client_to_update.date = date.strftime("%Y %m %d")
-            client_to_update.time = time.strftime("%H:%M:%S")
-            client_to_update.service = request.form.get('service')
-            client_to_update.package = request.form.get('package')
-            client_to_update.file = file.filename
-            db.session.commit()
+            # client_to_update = Client.query.filter_by(username=session['username']).first()
+            # print(client_to_update.email)
+            # client_to_update.email = email
+            # client_to_update.name = name
+            # client_to_update.address = address
+            # client_to_update.phone = phone
+            # client_to_update.date = date.strftime("%Y %m %d")
+            # client_to_update.time = time.strftime("%H:%M:%S")
+            # client_to_update.service = request.form.get('service')
+            # client_to_update.package = request.form.get('package')
+            # client_to_update.file = file.filename
+            # db.session.commit()
             file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
 
             return redirect(url_for('userpage'))
@@ -155,10 +192,10 @@ def wtform():
         return redirect(url_for('home'))
 
 @app.route('/form', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def form():
     username = session['username']
-    nama = Client.query.filter_by(username=username).first()
+    # nama = Client.query.filter_by(username=username).first()
     form = ClientForm()
     if 'username' in session:
         if request.method == 'POST':
@@ -171,16 +208,16 @@ def form():
             file = form.payment.data
             print(type(date))
             # print(file.filename)
-            client_to_update = Client.query.filter_by(username=session['username']).first()
-            print(client_to_update.email)
-            client_to_update.email = email
-            client_to_update.name = name
-            client_to_update.address = address
-            client_to_update.phone = phone
-            client_to_update.date = date.strftime("%Y %m %d")
-            client_to_update.time = time.strftime("%H:%M:%S")
-            client_to_update.service = request.form.get('service')
-            client_to_update.package = request.form.get('package')
+            # client_to_update = Client.query.filter_by(username=session['username']).first()
+            # print(client_to_update.email)
+            # client_to_update.email = email
+            # client_to_update.name = name
+            # client_to_update.address = address
+            # client_to_update.phone = phone
+            # client_to_update.date = date.strftime("%Y %m %d")
+            # client_to_update.time = time.strftime("%H:%M:%S")
+            # client_to_update.service = request.form.get('service')
+            # client_to_update.package = request.form.get('package')
             # client_to_update.file = file.filename
             db.session.commit()
             # file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'],
@@ -193,12 +230,13 @@ def form():
         return redirect(url_for('home'))
 
 
+#not used
 @app.route('/user')
-@login_required
+# @login_required
 def user():
-    if 'username' in session and current_user.is_authenticated:
+    if 'username' in session:
 
-        user = Client.query.filter_by(username=session['username']).first()
+        # user = Client.query.filter_by(username=session['username']).first()
         username = user.username
         name = user.name
         email = user.email
@@ -217,28 +255,31 @@ def user():
         return redirect(url_for('home'))
 
 @app.route('/userpage')
-@login_required
+# @login_required
 def userpage():
-    if 'username' in session and current_user.is_authenticated:
+    if 'username' in session:
+        print(request.args.get('booking_info'))
 
-        user = Client.query.filter_by(username=session['username']).first()
-        username = user.username
-        name = user.name
-        email = user.email
-        address = user.address
-        phone = user.phone
-        date = user.date
-        time = user.time
-        service = user.service
-        package = user.package
-        if user.file == None:
-            print(user.file)
-            payment = 'kosong'
-        else:
 
-            payment = user.file
-            print(user.file)
-        return render_template('userpage.html', username=username, name=name, email=email, address=address, phone=phone, date=date, time=time, service=service, package=package, payment=payment)
+        # user = Client.query.filter_by(username=session['username']).first()
+        query = find_user(session['username'])
+        username = query['username']
+        name = query.get('name')
+        email = query.get('email')
+        address = query.get('address')
+        phone = query.get('phone')
+        date = query.get('date')
+        time = query.get('time')
+        service = query.get('service')
+        package = query.get('package')
+        # if user.file == None:
+        #     print(user.file)
+        #     payment = 'kosong'
+        # else:
+        #
+        #     payment = user.file
+        #     print(user.file)
+        return render_template('userpage.html', username=username, name=name, email=email, address=address, phone=phone, date=date, time=time, service=service, package=package)
     else:
         flash('you need to log in')
         return redirect(url_for('home'))
@@ -254,14 +295,23 @@ def services():
 
 @app.route('/product')
 def product():
-    jualan = []
-    dagangan = fetchall()
-    for i in dagangan:
-        jualan.append(i)
+
+    img_pool = {'engagement': 'https://storage.googleapis.com/assets-caklutfi/engagement-lg.jpg',
+                'wedding': 'https://storage.googleapis.com/assets-caklutfi/wedding-lg.jpg',
+                'prewedding': 'https://storage.googleapis.com/assets-caklutfi/prewed-lg.jpg',
+                'graduation': 'https://storage.googleapis.com/assets-caklutfi/wisuda-lg.jpg'}
+
+    jualan = [x for x in fetchall()]
+    print(jualan)
+
 
     product = fetchone(request.args.get('service'))
+
+    img = img_pool[request.args.get('service')]
+    dagangan =[x for x in get_package(request.args.get('service'))]
+    print(dagangan)
     print(type(product))
-    return render_template('product2.html', product=product, services=jualan)
+    return render_template('product.html', dagangan=dagangan, services=jualan, image=img)
 
 @app.errorhandler(401)
 def custom_401(error):
